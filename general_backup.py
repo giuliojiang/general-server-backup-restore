@@ -5,6 +5,10 @@ import random
 import os
 import argparse
 
+# Output files:
+# output_path/database.sql.tgz
+# output_path/archive_###.tgz
+
 def backup_sql(output_path):
 	# create SQL dump
 	dumpfile = output_path + os.sep + 'database.sql'
