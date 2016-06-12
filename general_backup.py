@@ -12,9 +12,11 @@ import shutil
 def backup_sql(output_path):
     # create SQL dump
     dumpfile = output_path + os.sep + 'database.sql'
-    cmd = 'mysqldump -u root -p --all-databases > {}'.format(output_path)
+    cmd = 'mysqldump -u root -p --all-databases > {}'.format(dumpfile)
+    print(cmd)
     code = subprocess.call(cmd, shell=True)
     if code != 0:
+        print('>>>>>>mysqldump failed')
         return code
         
     # compress the dump
@@ -25,8 +27,11 @@ def backup_sql(output_path):
     cmd.append(dump_compressed_file)
     cmd.append(dumpfile)
     code = subprocess.call(cmd)
+    if code != 0:
+        return code
     
-    return code
+    os.remove(dumpfile)
+    return 0
     
 def remove_newlines(s):
     out = ''
@@ -65,10 +70,11 @@ def backup_directories(input_file_path, output_path, original_working_directory)
         input_folder_path = find_abs_path_relative_of(line, original_working_directory)
         if len(input_folder_path) == 0:
             continue
+        print('Processing {}...'.format(input_folder_path))
         output_archive_name = output_path + os.sep + 'archive_{}.tgz'.format(counter)
         cmd = []
         cmd.append('tar')
-        cmd.append('-avcf')
+        cmd.append('-acf')
         cmd.append(output_archive_name)
         cmd.append(input_folder_path)
         code = subprocess.call(cmd)
