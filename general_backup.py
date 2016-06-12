@@ -6,21 +6,22 @@ import argparse
 import shutil
 
 # Output files:
-# output_path/database.sql.tgz
+# output_path/database.sql.tar.gz
 # output_path/archive_###.tgz
 
 def backup_sql(output_path):
+    os.chdir(output_path)
+    
     # create SQL dump
-    dumpfile = output_path + os.sep + 'database.sql'
+    dumpfile = 'database.sql'
     cmd = 'mysqldump -u root -p --all-databases > {}'.format(dumpfile)
-    print(cmd)
     code = subprocess.call(cmd, shell=True)
     if code != 0:
         print('>>>>>>mysqldump failed')
         return code
         
     # compress the dump
-    dump_compressed_file = output_path + os.sep + 'database.sql.tgz'
+    dump_compressed_file = 'database.sql.tar.gz'
     cmd = []
     cmd.append('tar')
     cmd.append('-avcf')
@@ -81,6 +82,7 @@ def backup_directories(input_file_path, output_path, original_working_directory)
         if code != 0:
             print('Error when compressing folder {}'.format(line))
             return code
+        counter += 1
             
     return 0
     
